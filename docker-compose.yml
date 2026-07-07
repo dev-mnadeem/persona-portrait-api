@@ -9,6 +9,8 @@ services:
       IMAGE_PROVIDER: ${IMAGE_PROVIDER:-local}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       DJANGO_DEBUG: ${DJANGO_DEBUG:-false}
+      # gunicorn is the only server in this stack, so it also serves the PNGs.
+      DJANGO_SERVE_MEDIA: ${DJANGO_SERVE_MEDIA:-true}
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY in .env before starting}
       DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0}
     volumes:

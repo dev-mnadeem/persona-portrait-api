@@ -270,3 +270,31 @@ class HealthTests(MediaTestCase):
 
     def test_health_is_reachable_by_name(self):
         self.assertEqual(reverse("health"), HEALTH_URL)
+
+
+class MediaServingTests(ApiTestCase):
+    def _create_portrait_path(self):
+        created = self.client.post(
+            LIST_URL, {"name": "Vale", "prompt": "a captain"}, format="json"
+        ).json()
+        return created["image_url"].removeprefix("http://testserver")
+
+    @override_settings(SERVE_MEDIA=True)
+    def test_the_returned_image_url_resolves_when_media_is_served(self):
+        response = self.client.get(self._create_portrait_path())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response["Content-Type"], "image/png")
+        self.assertTrue(b"".join(response.streaming_content).startswith(b"\x89PNG"))
+
+    @override_settings(SERVE_MEDIA=False)
+    def test_media_is_a_404_when_serving_is_off(self):
+        response = self.client.get(self._create_portrait_path())
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @override_settings(SERVE_MEDIA=True)
+    def test_paths_outside_media_root_are_refused(self):
+        response = self.client.get("/media/../manage.py")
+        self.assertIn(
+            response.status_code,
+            {status.HTTP_400_BAD_REQUEST, status.HTTP_404_NOT_FOUND},
+        )

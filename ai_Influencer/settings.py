@@ -130,6 +130,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # MEDIA_ROOT so Django's storage API owns the paths and the URLs.
 MEDIA_URL = "/media/"
 MEDIA_ROOT = Path(env_str("DJANGO_MEDIA_ROOT") or BASE_DIR / "media")
+# Without a front door (the compose stack runs gunicorn alone) the API would
+# hand out image_url values that 404. Opt in to letting Django serve them.
+SERVE_MEDIA = env_bool("DJANGO_SERVE_MEDIA", DEBUG)
 
 # --------------------------------------------------------------------------
 # API

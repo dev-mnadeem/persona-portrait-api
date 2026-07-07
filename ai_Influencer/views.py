@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from django.conf import settings
 from django.db import connection
-from django.http import HttpRequest, JsonResponse
+from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
+from django.views.static import serve
 
 from characters.providers import available_providers
 
@@ -29,3 +30,15 @@ def health(request: HttpRequest) -> JsonResponse:  # noqa: ARG001 - Django view 
         "providers_available": available_providers(),
     }
     return JsonResponse(payload, status=200 if database_ok else HTTP_SERVICE_UNAVAILABLE)
+
+
+def media(request: HttpRequest, path: str) -> HttpResponse:
+    """Serve a rendered portrait when ``SERVE_MEDIA`` is on, else 404.
+
+    The flag is read per request so it can be flipped without reloading the
+    URLconf. In a real deployment the front door (nginx, S3, a CDN) serves
+    MEDIA_ROOT and this stays off.
+    """
+    if not settings.SERVE_MEDIA:
+        raise Http404("Media is not served by the application")
+    return serve(request, path, document_root=settings.MEDIA_ROOT)
