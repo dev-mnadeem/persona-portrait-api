@@ -1,0 +1,39 @@
+# Virtualenvs and dependencies
+project_venv/
+venv/
+.venv/
+env/
+node_modules/
+
+# Python bytecode and tool caches
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage/
+
+# Build output
+.next/
+dist/
+build/
+*.egg-info/
+
+# Local state: database, generated portraits, collected static
+db.sqlite3
+media/
+staticfiles/
+
+# Secrets: keep only the template
+.env
+.env.*
+!.env.example
+
+# Scratch and OS noise
+tmp/
+*.log
+.DS_Store
+.github/
