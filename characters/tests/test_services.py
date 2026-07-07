@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import os
+from unittest import mock
 
 from django.conf import settings
+from django.db import DatabaseError
 from django.test import SimpleTestCase
 
 from characters.models import Character
@@ -71,6 +73,20 @@ class CharacterStudioTests(MediaTestCase):
         studio = CharacterStudio(FailingProvider())
         with self.assertRaises(ImageGenerationError):
             studio.create_character(user=self.user, name="Vale", prompt="a captain")
+        self.assertEqual(Character.objects.count(), 0)
+
+    def test_a_failed_insert_removes_the_rendered_file(self):
+        image_dir = os.path.join(settings.MEDIA_ROOT, "character_images")
+        os.makedirs(image_dir, exist_ok=True)
+        before = set(os.listdir(image_dir))
+        with (
+            mock.patch.object(Character, "save", side_effect=DatabaseError("disk full")),
+            self.assertRaises(DatabaseError),
+        ):
+            CharacterStudio(StubProvider()).create_character(
+                user=self.user, name="Vale", prompt="a captain"
+            )
+        self.assertEqual(set(os.listdir(image_dir)), before)
         self.assertEqual(Character.objects.count(), 0)
 
     def test_provider_is_resolved_from_settings_when_not_injected(self):

@@ -10,7 +10,7 @@ import uuid
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
-from django.db import transaction
+from django.db import DatabaseError, transaction
 from django.utils.text import slugify
 
 from characters.models import Character
@@ -51,21 +51,29 @@ class CharacterStudio:
         Raises:
             ImageGenerationError: if the provider could not produce an image.
                 Nothing is written to the database in that case.
+            DatabaseError: if the row could not be saved. The rendered file
+                is removed again before the error propagates.
         """
         image = self.provider.generate(prompt, size=self._size)
 
-        with transaction.atomic():
-            character = Character(
-                user=user,
-                name=name,
-                prompt=prompt,
-                provider=image.provider,
-                image_model=image.model,
-            )
-            character.image.save(
-                build_filename(name, image.extension),
-                ContentFile(image.data),
-                save=False,
-            )
-            character.save()
+        character = Character(
+            user=user,
+            name=name,
+            prompt=prompt,
+            provider=image.provider,
+            image_model=image.model,
+        )
+        character.image.save(
+            build_filename(name, image.extension),
+            ContentFile(image.data),
+            save=False,
+        )
+        # The file is on disk before the row exists; a rolled-back INSERT must
+        # not leave an orphaned PNG behind.
+        try:
+            with transaction.atomic():
+                character.save()
+        except DatabaseError:
+            character.image.delete(save=False)
+            raise
         return character
