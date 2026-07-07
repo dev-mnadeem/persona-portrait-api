@@ -1,6 +1,12 @@
+[project]
+name = "persona-portrait-api"
+version = "1.0.0"
+description = "Django/DRF service that renders and stores character portraits from a prompt"
+requires-python = ">=3.13,<3.14"
+
 [tool.ruff]
 line-length = 100
-target-version = "py312"
+target-version = "py313"
 extend-exclude = ["characters/migrations", ".venv"]
 
 [tool.ruff.lint]
