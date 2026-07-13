@@ -123,3 +123,16 @@ here** — Docker Desktop is off on this machine, so only `docker compose config
   `CharacterStudio` seam.
 - `MEDIA_ROOT` is local disk: no S3, no CDN. Tokens never expire, and users come
   from `manage.py` or the admin — there is no registration endpoint.
+
+## Offline portrait run
+
+![Native authenticated portrait request](docs/screenshots/native-api.png)
+
+The image in this capture is the local provider's deterministic identicon, not
+an AI-generated portrait. A native run rejected an unauthenticated request, then
+created and listed a character for a disposable authenticated user.
+[Responses](docs/native-api.json); login tokens are omitted from the record.
+
+## Author
+
+[**Muhammad Nadeem**](https://github.com/dev-mnadeem)

@@ -1,7 +1,7 @@
 # Runtime dependencies. Pinned to the versions this project is tested against.
 Django==6.1.1
-djangorestframework==3.18.1
-pillow==12.3.0
+djangorestframework==3.18.3
+pillow==13.0.0
 python-dotenv==1.2.3
 gunicorn==26.2.0
 

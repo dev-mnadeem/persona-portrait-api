@@ -1,0 +1,47 @@
+{
+  "mode": "Disposable SQLite and offline providers; authentication credentials omitted",
+  "exchanges": [
+    {
+      "request": "GET /api/characters/",
+      "status": 401,
+      "response": {
+        "detail": "Authentication credentials were not provided."
+      }
+    },
+    {
+      "request": "POST /api/characters/",
+      "status": 201,
+      "response": {
+        "id": 1,
+        "name": "Captain Vale",
+        "prompt": "a weathered sea captain with a silver beard",
+        "image_url": "http://127.0.0.1:15351/media/character_images/captain-vale-f3e1d2704cbf.png",
+        "provider": "local",
+        "image_model": "local-identicon-v1",
+        "owner": "portrait-demo",
+        "created_at": "2026-10-28T14:55:15.568358Z"
+      }
+    },
+    {
+      "request": "GET /api/characters/",
+      "status": 200,
+      "response": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            "id": 1,
+            "name": "Captain Vale",
+            "prompt": "a weathered sea captain with a silver beard",
+            "image_url": "http://127.0.0.1:15351/media/character_images/captain-vale-f3e1d2704cbf.png",
+            "provider": "local",
+            "image_model": "local-identicon-v1",
+            "owner": "portrait-demo",
+            "created_at": "2026-10-28T14:55:15.568358Z"
+          }
+        ]
+      }
+    }
+  ]
+}
